@@ -1,0 +1,67 @@
+
+
+/* 페이지 배경/타이틀 */
+.svc { background: var(--bg-cream); color: var(--text-strong); padding-bottom: var(--space-12); }
+.svc-hero { padding: var(--space-10) 0 var(--space-6); text-align: center; }
+.svc-title { font-size: var(--fs-2xl); font-weight: 800; margin: 0 0 var(--space-3); }
+.svc-prompt {
+  display: inline-block;
+  background: var(--beige-pill); color: var(--beige-pill-text);
+  padding: 10px 14px; border-radius: var(--radius-pill); font-size: var(--fs-sm);
+}
+
+/* 채팅 카드 */
+.svc-chat { margin-top: var(--space-6); }
+.chatbox {
+  background: #fff;
+  border: 1px solid var(--divider);
+  border-radius: 18px;
+  box-shadow: var(--shadow-1);
+  min-height: 320px;
+  max-height: 60dvh;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+/* 말풍선 */
+.row { display: flex; margin: 8px 0; }
+.row.left  { justify-content: flex-start; }
+.row.right { justify-content: flex-end; }
+
+.bubble {
+  max-width: 72ch;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--divider);
+  line-height: var(--lh-normal);
+  background: #fff;
+}
+.bubble.assistant { background: #f3f1ea; }  /* 연베이지(시안 톤) */
+.bubble.user { background: #111; color: #fff; border-color: #111; }
+
+/* 입력창 */
+.composer {
+  margin-top: var(--space-3);
+  position: sticky; bottom: 0;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 8px; align-items: center;
+  background: transparent;
+}
+.composer-input {
+  height: 48px; padding: 0 14px;
+  border-radius: 14px; border: 1px solid var(--divider);
+  background: #fff; outline: none; font: inherit;
+}
+.composer-send {
+  height: 48px; width: 48px;
+  display: grid; place-items: center;
+  border-radius: 12px; border: 1px solid var(--divider);
+  background: #fff; cursor: pointer;
+}
+.composer-send:hover { background: rgba(0,0,0,0.03); }
+
+/* 데스크톱 상향 */
+@media (min-width: 1024px){
+  .svc-title { font-size: var(--fs-3xl); }
+  .chatbox { min-height: 420px; max-height: 62dvh; }
+}

@@ -1,0 +1,128 @@
+.notfound-hint { color: var(--text-muted); font-size: var(--fs-sm); }
+
+/* ======== Section 1 : main-1 ======= */
+.main-1 {
+  height: 100vh;
+  display: flex;justify-content: center;align-items: center;
+  /* border: 1px solid red; */
+}
+
+.card {
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: var(--shadow-1);
+}
+
+.main-1 .container {
+  display: flex;flex-direction: column;
+  justify-content: center;align-items: center;
+  gap: 10px;margin: 0;padding: 0;
+  /* border: 1px solid blue; */
+}
+
+.main-text {
+  display: flex;flex-direction: column;
+  justify-content: center;align-items: center;
+  gap: 10px;margin-top: 10vh;
+  /* border: 1px solid red; */
+}
+
+.main-1 h1 {
+  color: var(--text-strong);
+  font-size: 36px;
+  font-weight: 500;
+}
+
+.moro-prompt {
+  background-color: var(--bg-pill);
+  border: none;border-radius: 10px;
+  padding: 30px;gap: 10px;
+}
+.moro-prompt span {
+  font-size: 28px;color: var(--light-grey);
+}
+
+.scroll-indicator {margin-top: 25vh;margin-bottom: 0;}
+
+
+/* ======= Section2 : main-2 ======= */
+
+.section-msg {
+  height: 100vh;
+  /* border: 1px solid green; */
+}
+
+.section-msg-body {
+  display: flex;height: 60vh;
+  align-items: center; justify-content: center;text-align: center;
+  margin-top: 15vh;
+  /* border: 1px dashed red; */
+}
+
+.section-msg-text {
+  font-size: clamp(24px, 2.8vw, 28px);
+  color: var(--text-strong);
+}
+
+.section-msg-chevron {
+  display: flex;flex-direction: column;
+  justify-content: flex-end;align-items: center;
+  color: var(--accent);
+  /* border: 1px solid red; */
+}
+/* 마지막 카드 전용 */
+.lastText {
+  font-size: clamp(20px, 3.2vw, 32px);
+  font-weight: 700;
+  color: var(--text-strong);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.lastEm {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: clamp(22px, 3.6vw, 36px);
+  font-weight: 800;
+}
+
+/* ======= Section 3 : main-3 ======= */
+.main-3 {
+  height: 100vh;
+  display: flex;justify-content: center;align-items: center;
+}
+.main-3 .container {
+  display: flex;flex-direction: column;
+  justify-content: center;align-items: center;
+  text-align: center;gap: 40px;
+}
+.main-3 .moro-title {
+  display: inline-block;
+  font-size: 46px;font-weight: 700;
+  line-height: 70px;
+}
+.main-3 p {
+  display: inline-block;
+  font-size: 26px;line-height: 60px;
+}
+.main-3 span {
+  font-weight: 700;
+}
+
+/* ======= Section 4 : main-4 ======= */
+.main-4 {
+  height: 100vh;
+  display: flex;justify-content: center;align-items: center;
+  /* border: 1px solid red; */
+}
+.main-4 .container {
+  display: flex;flex-direction: column;
+  justify-content: center;align-items: center;
+  text-align: center;gap: 20px;
+}
+.main-4 span {font-weight: 600;font-size: 30px;}
+.main-4 p {
+  display: inline-block;
+  font-size: 20px;line-height: 60px;
+  padding-top: 30px;
+}

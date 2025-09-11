@@ -1,0 +1,37 @@
+/* 화면 베이스 */
+.si { background: var(--bg-cream); color: var(--text-strong); padding-bottom: var(--space-12); }
+
+/* 헤더 */
+.si-hero { padding-bottom: var(--space-6); }
+.si-title { font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 var(--space-2); }
+.si-desc { color: var(--text-muted); }
+
+/* 스텝 블록 */
+.si-step { margin: var(--space-10) 0; }
+.si-step-title { font-size: var(--fs-lg); font-weight: 700; margin-bottom: var(--space-4); }
+.si-note { color: var(--text-muted); line-height: var(--lh-relaxed); }
+
+/* 채팅 카드 */
+.chat-card {
+  background:#fff; border:1px solid var(--divider);
+  border-radius: var(--radius-lg); padding: var(--space-6);
+  display: grid; gap: var(--space-3); box-shadow: var(--shadow-1);
+}
+.bubble-row { display:flex; }
+.bubble {
+  max-width: 70ch; white-space: pre-wrap;
+  padding: 10px 12px; border-radius: var(--radius-md); line-height: var(--lh-normal);
+  border: 1px solid var(--divider);
+  background: #fff;
+}
+.bubble--assistant { background: #faf9f5; } /* 연한 베이지 톤 */
+.bubble--user { background: #111; color:#fff; border-color:#111; }
+.bubble--wide { max-width: 90ch; }
+.bubble--link { background: #eef2ff; border-color:#c7d2fe; } /* 링크 톤 (연보라) */
+
+.si-link { color:#3740ff; text-decoration: underline; }
+
+/* 브레이크포인트 */
+@media (min-width: 1024px){
+  .si-title { font-size: var(--fs-3xl); }
+}

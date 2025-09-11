@@ -1,0 +1,10 @@
+.tabs { display:flex; gap: var(--space-2); margin: var(--space-4) 0 var(--space-6); flex-wrap: wrap; }
+.tab {
+  background: var(--bg-cream-weak);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--fs-sm);
+  text-decoration: none; color: inherit;
+}
+.tab.active { background:#fff; font-weight:600; box-shadow: var(--shadow-1); }

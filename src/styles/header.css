@@ -1,0 +1,47 @@
+header {
+    height: var(--header-h);
+}
+
+.header-box {
+    display: flex;justify-content: space-between;align-items: center;
+}
+
+/* 반응형 유틸 */
+.show-sm { display: inline-flex; }
+.hide-sm { display: none; }
+@media (min-width: 900px){
+  .show-sm { display: none; }
+  .hide-sm { display: flex; }
+}
+
+/* 드로어/오버레이 */
+.drawer-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(7px);
+  z-index: var(--z-drawer);
+}
+.drawer {
+  position: fixed; top: 0; right: 0; height: 100%;
+  width: min(76vw, 320px);
+  background: #fff;
+  border-left: 1px solid var(--divider);
+  box-shadow: var(--shadow-2);
+  z-index: calc(var(--z-drawer) + 1);
+  display: grid; align-content: start;
+  padding: 30px;
+}
+.drawer-nav {
+  display: grid; gap: 12px; margin-top: 8px;
+}
+.drawer-nav a {
+  font-weight: 500;
+  text-decoration: none; color: var(--text-strong);
+  padding: 10px 8px; border-radius: 10px;
+}
+.drawer-nav a:hover { background: rgba(0,0,0,0.04); }
+
+.drawer-close {
+  text-align: right;padding: 0 10px;
+  background: none;border: none;
+}

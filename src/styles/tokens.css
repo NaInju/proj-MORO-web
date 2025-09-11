@@ -1,0 +1,84 @@
+
+
+/* ============================
+   Design Tokens (MORO)
+   - 색상 / 타이포 / 간격 / 라운드 / 그림자 / 레이아웃 / z-index / 브레이크포인트
+   - 페이지 어디서든 var(--token) 형태로 사용
+   ============================ */
+
+:root {
+  /* 🎨 Colors */
+  --bg-cream:   #FBFAF3; /* 페이지 배경 */
+  --bg-strip:   #F1EEE6; /* 상단/중간 얇은 스트립 */
+  --bg-pill:    #F3F0D8; /* 히어로 프롬프트 배경 */
+  --bg-card:    #FFFFFF; /* 카드/말풍선 기본 */
+  --footer-bg:  #EDE6D8; /* 푸터 배경 (근사 톤) */
+
+  --text-strong:#322E27; /* 본문/헤딩 */
+  --text-muted: #7D796F; /* 보조 텍스트 */
+  --text-pill:  #81775F; /* 프롬프트 텍스트 */
+  --text-dark2: #5B5345; /* 강조 대체 톤 */
+  --accent:     #957B43; /* 아이콘/링크 포인트 */
+  --divider:    #DDD8C8; /* 경계선 */
+  --light-grey:#969696;/* 희미한 선/아이콘 보조 */
+
+  /* Type scale */
+  ---font-sans: 'Pretendard', system-ui,'Noto Sans KR';
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+  --fs-2xl: 32px;
+  --fs-3xl: 40px;
+
+  --lh-tight: 1.25;
+  --lh-normal: 1.6;
+  --lh-relaxed: 1.8;
+
+  /* ---------- Spacing Scale ---------- */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ⭕ Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* 🌑 Shadow */
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-2: 0 6px 16px rgba(0,0,0,0.08);
+
+  /* ---------- Layout ---------- */
+  --container: 1280px;   /* 페이지 최대 폭 */
+  --header-h: 100px;      /* 헤더 높이 */
+  --gutter-1 : 50px;
+  --gutter-2 : 70px;
+  /* ---------- Z-index ---------- */
+  --z-header: 20;
+  --z-drawer: 30;
+  --z-modal:  40;
+
+  /* ---------- Breakpoints ---------- */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px; /* 데스크톱 기준 */
+  --bp-xl: 1280px;
+}
+
+/* 데스크톱에서 히어로 헤딩 스케일 업 */
+@media (min-width: 1024px) {
+  :root { --fs-2xl: 44px; --fs-3xl: 52px; }
+}
+

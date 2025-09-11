@@ -23,10 +23,10 @@ export default function ServiceInfo() {
       <section className="si-step container">
         <h2 className="si-step-title">1. MORO와 대화를 시작합니다</h2>
         <div className="chat-card">
-          <ChatBubble role="assistant">여행이 가고 싶다면 일단 요즘 알고 지낸 감정과 이유가 가장 중요해</ChatBubble>
+          <ChatBubble role="assistant">만족도 높은 자신만의 여행이 가고 싶다면 먼저 본인에 대해 생각해봐야합니다.</ChatBubble>
           <ChatBubble role="assistant">안녕하세요 username님, 지금까지 자연 속 힐링에 높은 반응을 보이셨어요. 맞다면 알려주세요!</ChatBubble>
-          <ChatBubble role="user">네! 힐링이 좋아요.</ChatBubble>
-          <ChatBubble role="assistant">username님, 맞아요. 정확하는 것이 정말 중요하거든요</ChatBubble>
+          <ChatBubble role="user">네! 자연 속 힐링이 좋아요.</ChatBubble>
+          <ChatBubble role="assistant">그렇다면 username님, 좋아하는 계절과 활동이 있으실까요?</ChatBubble>
           <ChatBubble role="user">나는 여름을 좋아하고, 혼자서 걷기를 좋아해요.</ChatBubble>
         </div>
         <p className="si-note">MORO와 대화를 통해 요즘 어떤 여행이 어울리는지 또는 거리가 끌렸던 경험/계절/취향을 자유롭게 말씀해주세요.</p>
@@ -38,11 +38,11 @@ export default function ServiceInfo() {
         <div className="chat-card">
           <ChatBubble role="assistant">휴양지로 괜찮으신가요?</ChatBubble>
           <ChatBubble role="user">휴양지로 괜찮아요. 검소, 계절무관.</ChatBubble>
-          <ChatBubble role="assistant">내 일정에서 키워드 없어? 같이 확인해보자!</ChatBubble>
-          <ChatBubble role="user">고독한 산책, 짧은 3박 4일로 가고 싶어</ChatBubble>
+          <ChatBubble role="assistant">제공드린 키워드 중 마음에 드는 키워드는 없었나요? 없었다면 추가로 고민해보겠습니다.</ChatBubble>
+          <ChatBubble role="user">조용한 산책 위주로, 짧은 3박 4일로 가고 싶어</ChatBubble>
           <ChatBubble role="assistant" wide>
-            그럼 아마 서쪽 루트로 갈지 신중해도 한 방향을 추천해드릴게요.<br/>
-            맥락으로 만들어진 경로/장소/메모를 카테고리로 정리해드리고 (username)님 노션 보드에 저장됩니다.
+            그럼 관광지나 볼거리가 많은 곳보다는 아기자기한 풍경이 매력인 곳이 더 좋겠네요.<br/>
+            그동안의 맥락으로 만들어진 경로/장소/메모를 카테고리로 정리해드리고 (username)님 노션 보드에 저장됩니다.
           </ChatBubble>
         </div>
       </section>

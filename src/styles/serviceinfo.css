@@ -18,7 +18,7 @@
   display: grid; gap: var(--space-3); box-shadow: var(--shadow-1);
 }
 .bubble-row { display:flex; }
-.bubble {
+.ch-bubble {
   max-width: 70ch; white-space: pre-wrap;
   padding: 10px 12px; border-radius: var(--radius-md); line-height: var(--lh-normal);
   border: 1px solid var(--divider);

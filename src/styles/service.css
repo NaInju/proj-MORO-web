@@ -2,8 +2,8 @@
 
 /* 페이지 배경/타이틀 */
 .svc { background: var(--bg-cream); color: var(--text-strong); padding-bottom: var(--space-12); }
-.svc-hero { padding: var(--space-10) 0 var(--space-6); text-align: center; }
-.svc-title { font-size: var(--fs-2xl); font-weight: 800; margin: 0 0 var(--space-3); }
+.svc-hero { padding: var(--space-6) 0 0; text-align: center; }
+.svc-title { font-size: var(--fs-lg); font-weight: 600; margin: 0; }
 .svc-prompt {
   display: inline-block;
   background: var(--beige-pill); color: var(--beige-pill-text);
@@ -60,8 +60,31 @@
 }
 .composer-send:hover { background: rgba(0,0,0,0.03); }
 
+/* 에러 배너 */
+.alert-error {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid #e11d48;
+  background: #fff1f2;
+  color: #991b1b;
+  border-radius: 10px;
+  font-size: var(--fs-sm);
+}
+
+/* 로딩 점멸 */
+.dotting::after {
+  content: " ";
+  animation: dot 1.2s infinite steps(4, end);
+}
+@keyframes dot {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+
 /* 데스크톱 상향 */
 @media (min-width: 1024px){
-  .svc-title { font-size: var(--fs-3xl); }
+  .svc-title { font-size: var(--fs-xl); }
   .chatbox { min-height: 420px; max-height: 62dvh; }
 }

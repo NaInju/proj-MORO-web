@@ -36,8 +36,8 @@ export default function ServiceInfo() {
       <section className="si-step container">
         <h2 className="si-step-title">2. 취향/조건을 조금 더 구체화해요</h2>
         <div className="chat-card">
-          <ChatBubble role="assistant">휴양지로 괜찮으신가요?</ChatBubble>
-          <ChatBubble role="user">휴양지로 괜찮아요. 검소, 계절무관.</ChatBubble>
+          <ChatBubble role="assistant">휴양지도 괜찮으신가요?</ChatBubble>
+          <ChatBubble role="user">휴양지도 좋아요.</ChatBubble>
           <ChatBubble role="assistant">제공드린 키워드 중 마음에 드는 키워드는 없었나요? 없었다면 추가로 고민해보겠습니다.</ChatBubble>
           <ChatBubble role="user">조용한 산책 위주로, 짧은 3박 4일로 가고 싶어</ChatBubble>
           <ChatBubble role="assistant" wide>
@@ -86,7 +86,7 @@ function ChatBubble({
       style={{ justifyContent: isUser ? "flex-end" : "flex-start" }}
     >
       <div
-        className={`bubble ${isUser ? "bubble--user" : "bubble--assistant"} ${wide ? "bubble--wide" : ""} ${tone==="link" ? "bubble--link" : ""}`}
+        className={`ch-bubble ${isUser ? "bubble--user" : "bubble--assistant"} ${wide ? "bubble--wide" : ""} ${tone==="link" ? "bubble--link" : ""}`}
       >
         {children}
       </div>

@@ -57,27 +57,29 @@ function parseMeta(text: string): {
   return out;
 }
 
-// 화면 표시용: 메타 힌트 제거(강화판)
+// 화면 표시용: 메타 힌트 제거(강화판, 한/영 키워드 포함)
 function stripMeta(raw: string): string {
-  // 0) 정규화
   let t = raw
-    .replace(/\r\n/g, "\n")     // CRLF → LF
-    .replace(/\u00A0/g, " ")    // NBSP → space
-    .replace(/[：]/g, ":")      // 전각 콜론 → :
-    .replace(/[–—]/g, "-");     // en/em dash → -
+    .replace(/\r\n/g, "\n")
+    .replace(/\u00A0/g, " ")
+    .replace(/[：]/g, ":")
+    .replace(/[–—]/g, "-");
 
-  // 1) ```meta ... ``` 블록 통째 제거
+  // 1) ```meta ... ``` 블록 제거
   t = t.replace(/```meta[\s\S]*?```/gi, "");
 
-  // 2) 문장 중간/끝에 낀 [NEXT: ...] 한 덩어리 제거 (중간이어도 동작)
-  t = t.replace(/\s*$begin:math:display$[^$end:math:display$\n]*\bNEXT\b[^\]\n]*\](?:[^\n]*)?/gi, "");
+  // 2) 대괄호 한 덩어리 메타 제거: [NEXT: ...] / [다음: ...]
+  t = t.replace(/\s*\[[^\]\n]*\b(NEXT|다음)\b[^\]\n]*\](?:[^\n]*)?/gim, "");
 
-  // 3) 키워드 등장 지점부터 "그 줄의 끝"까지 제거
-  //    (줄 어디에 있어도 그 뒤는 메타로 간주)
-  t = t.replace(/\b(NEXT|OPTIONS?|OPTION|FILLED|MISSING|CONF(?:IDENCE)?)\s*[:：].*$/gmi, "");
+  // 3) 키워드가 있는 "그 줄" 제거(영/한)
+  const keyLine = new RegExp(
+    String.raw`^.*\b(NEXT|OPTION|OPTIONS?|FILLED|MISSING|CONF(?:IDENCE)?)\b\s*[:：].*$|^.*\b(다음|옵션|선택지|채움|부족|확신)\b\s*[:：].*$`,
+    "gmi"
+  );
+  t = t.replace(keyLine, "");
 
-  // 4) 남아있을 마지막 메타 시작부터 싹 잘라내기 (세이프가드)
-  const cutIdx = t.search(/\n\s*(?:\[?\s*NEXT\s*:|```meta)/i);
+  // 4) 남아있을 메타 꼬리 잘라내기
+  const cutIdx = t.search(/\n\s*(?:\[?\s*(NEXT|다음)\s*:|```meta)/i);
   if (cutIdx !== -1) t = t.slice(0, cutIdx);
 
   // 5) 공백/빈 줄 정리

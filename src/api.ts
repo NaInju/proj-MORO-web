@@ -52,10 +52,12 @@ async function fetchJson(input: RequestInfo | URL, init: RequestInit & { timeout
 }
 
 /** /chat POST */
+export type ChatReply = { response: string; meta?: string };
+
 export async function postChat(
   body: { messages: ChatMsg[] },
   signal?: AbortSignal
-): Promise<string> {
+): Promise<ChatReply> {
   const { data } = await fetchJson(`${API_BASE}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -64,7 +66,7 @@ export async function postChat(
     timeoutMs: 25000, // gpt 응답 여유
   });
   if (!data?.ok) throw new Error(data?.error || "서버 오류");
-  return data.response as string;
+  return { response: data.response as string, meta: data.meta as string | undefined };
 }
 
 /** (선택) /notion/create POST — 저장 버튼 붙일 때 사용 */

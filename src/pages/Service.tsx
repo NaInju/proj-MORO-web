@@ -117,38 +117,36 @@ export default function Service() {
     setMessages(history);
 
     try {
-      const answer = await postChat({
+      const { response, meta: rawMeta } = await postChat({
         messages: [
           ...history.map(m => ({ role: m.role, content: m.text })),
           // 위에서 userMsg 이미 history에 포함되어 있으므로 추가 X
         ],
       });
 
-      // postChat 호출 후
+      // 단계 전환용 원문(meta)로 파싱
+      const metaInfo = parseMeta(rawMeta ?? "");   // ← 원문 메타
 
-      // ✅ 메타 먼저 파싱해서 단계 전환에 활용
-      const meta = parseMeta(answer);
-
-      // ✅ 사용자에게 보일 텍스트는 메타 제거본으로
-      const visible = stripMeta(answer);
+      // 화면 표시용은 서버가 이미 제거한 response 사용 (추가 안전망으로 stripMeta 한 번 더)
+      const visible = stripMeta(response);
 
       const bot: Msg = { id: crypto.randomUUID(), role: "assistant", text: visible };
       const nextMsgs = [...history, bot];
       setMessages(nextMsgs);
 
       // 후보/선택지 세팅
-      if (meta.options?.length) setOptions(meta.options);
+      if (metaInfo.options?.length) setOptions(metaInfo.options);
 
-      // ✅ 추천 전환 가드 (취향 파악 충분성)
+      // 추천 전환 가드
       const hasDates = !!profile.dates || !!profile.days;
       const hasBudget = !!profile.budget;
       const requiredOk = REQUIRED.every(k => Boolean(profile[k])) && hasDates && hasBudget;
-      const confOk = (meta.confidence ?? 0) >= 0.7;
+      const confOk = (metaInfo.confidence ?? 0) >= 0.7;
 
-      let nextStage = meta.next;
-      if (nextStage === "recommend" && !(requiredOk || confOk)) {
-        nextStage = "ask"; // 아직 캐묻자
-      }
+      let nextStage = metaInfo.next;
+      if (nextStage === "recommend" && !(requiredOk || confOk)) nextStage = "ask";
+      if (nextStage) setStage(nextStage);
+
 
       // 단계 전환
       if (nextStage) setStage(nextStage);

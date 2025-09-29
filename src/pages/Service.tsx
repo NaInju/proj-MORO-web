@@ -57,6 +57,17 @@ function parseMeta(text: string): {
   return out;
 }
 
+// 화면 표시용: 메타 힌트 제거
+function stripMeta(text: string): string {
+  return text
+    // ```meta ... ``` 코드블록 제거
+    .replace(/```meta[\s\S]*?```/gi, "")
+    // [NEXT: ...] 한 줄 제거
+    .replace(/\s*\[NEXT:[^\]\n]+\][^\n]*\n?/gi, "")
+    // NEXT:/OPTIONS:/FILLED:/MISSING:/CONF: 같은 라인 제거
+    .replace(/^\s*(NEXT|OPTIONS?|FILLED|MISSING|CONF(IDENCE)?):.*$/gmi, "")
+    .trim();
+}
 
 
 export default function Service() {
@@ -99,12 +110,16 @@ export default function Service() {
       });
 
       // postChat 호출 후
-      const bot: Msg = { id: crypto.randomUUID(), role: "assistant", text: answer };
+
+      // ✅ 메타 먼저 파싱해서 단계 전환에 활용
+      const meta = parseMeta(answer);
+
+      // ✅ 사용자에게 보일 텍스트는 메타 제거본으로
+      const visible = stripMeta(answer);
+
+      const bot: Msg = { id: crypto.randomUUID(), role: "assistant", text: visible };
       const nextMsgs = [...history, bot];
       setMessages(nextMsgs);
-
-      // ✅ 메타 파싱
-      const meta = parseMeta(answer);
 
       // 후보/선택지 세팅
       if (meta.options?.length) setOptions(meta.options);

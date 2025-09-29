@@ -57,29 +57,26 @@ function parseMeta(text: string): {
   return out;
 }
 
-// 화면 표시용: 메타 힌트(코드블록/대괄호/키워드 라인) 제거 - 더 강력 버전
+// 화면 표시용: 메타 힌트(코드블록/대괄호/키워드 라인) 제거 - 하드닝 버전
 function stripMeta(text: string): string {
   let t = text;
 
-  // 1) ```meta ... ``` 코드블록 통째로 제거
+  // ```meta ... ``` 코드블록 제거
   t = t.replace(/```meta[\s\S]*?```/gi, "");
 
-  // 2) 문장 끝에 붙는 [NEXT: ...] 한 줄 통째 제거
-  //    (앞에 개행이 있든 없든 제거; 줄 끝까지)
-  t = t.replace(/\s*\[(?:\s*NEXT\s*:[^\]]+)\][^\n]*?(?:\n|$)/gi, "");
+  // 대괄호 한 줄 메타 제거: "[NEXT: ...] ..." 형태
+  t = t.replace(/^\s*\[[^\]]*NEXT[^\]]*\][^\n]*\n?/gmi, "");
 
-  // 3) 단독 키워드 라인 제거 (NEXT/OPTIONS/FILLED/MISSING/CONF…)
-  t = t.replace(/^\s*(NEXT|OPTIONS?|FILLED|MISSING|CONF(?:IDENCE)?)\s*:\s*.*$/gmi, "");
+  // 키워드 라인 제거 (줄 어딘가에 있어도 그 줄 통째로 삭제)
+  const keyLine = /^.*\b(NEXT|OPTIONS?|FILLED|MISSING|CONF(?:IDENCE)?)\s*[:：].*$/gmi;
+  t = t.replace(keyLine, "");
 
-  // 4) 혹시 본문 끝에 메타 블럭이 이어진 경우,
-  //    마지막 메타 시작 지점부터 싹 잘라내기 (세이프 가드)
-  const idx = t.search(/\n\s*(?:\[?\s*NEXT\s*:|```meta)/i);
-  if (idx !== -1) t = t.slice(0, idx);
+  // 혹시 남아있을 마지막 메타 시작부터 싹 자르기(세이프가드)
+  const cut = t.search(/\n\s*(?:\[?\s*NEXT\s*:|```meta)/i);
+  if (cut !== -1) t = t.slice(0, cut);
 
-  // 5) 남은 빈 줄 정리
-  t = t.replace(/\n{3,}/g, "\n\n").trim();
-
-  return t;
+  // 빈 줄 정리
+  return t.replace(/\n{3,}/g, "\n\n").trim();
 }
 
 

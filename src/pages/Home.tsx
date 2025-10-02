@@ -4,8 +4,12 @@ import SectionMessage from "../components/SectionMessage";
 
 import ArrowIcon from "../components/icons/ArrowIcon";
 import Chevrons from "../components/icons/Chevrons";
+import SendPlaneFill from "../components/icons/SendPlaneFill";
 
 import '../styles/home.css'
+import '../styles/tokens.css'
+import SendIcon from "../components/icons/SendIcon";
+
 
 // ...
 
@@ -31,8 +35,9 @@ export default function Home(){
               onClick={() => nav("/service")}
               aria-label="채팅 페이지로 이동"
             >
-              <span>당신은 어떤 마음을 가지고 어디로 떠나고 싶나요?</span>
-              <ArrowIcon />
+              <span style={{fontSize: 24, paddingRight:20}}>당신은 어떤 마음을 가지고 어디로 떠나고 싶나요?</span>
+              {/* <SendIcon style={{width: 24, height: 24}}/> */}
+              <SendPlaneFill className = "send-icon-1" />
             </button>
           </div>
 

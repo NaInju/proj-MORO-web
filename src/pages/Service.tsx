@@ -7,7 +7,12 @@ import SendIcon from "../components/icons/SendIcon";
 import { postChat, createNotionPage } from "../api";
 
 
-type Msg = { id: string; role: "user" | "assistant"; text: string };
+type Msg = { 
+  id: string; 
+  role: "user" | "assistant"; 
+  text: string 
+  options?: string[];
+};
 type Stage = "ask" | "confirm" | "recommend" | "pick" | "askPlan" | "plan" | "save" | "done";
 
 // 추가: 취향 슬롯(간단 버전)
@@ -93,7 +98,6 @@ export default function Service() {
   const [messages, setMessages] = useState<Msg[]>([
     { id: crypto.randomUUID(), role: "assistant", text: "안녕하세요! 반가워요. 딱 맞는 여행을 함께 그려볼게요.\n어떤 분위기의 여행을 원하시나요?(예: 미니멀, 자연, 카페투어)" },
   ]);
-  const [options, setOptions] = useState<string[]>([]);   // 후보/선택지
   const [profile, setProfile] = useState<Profile>({});    // 취향 슬롯(필요시 확장)
 
   const [input, setInput] = useState("");
@@ -110,6 +114,8 @@ export default function Service() {
   async function sendUser(text: string) {
     setLoading(true);
     setError(null);
+
+    setMessages(prev => prev.map(m => (m.options?.length ? { ...m, options: [] } : m)));
 
     const userMsg: Msg = { id: crypto.randomUUID(), role: "user", text };
     // 최신 히스토리 로컬 변수로 구성
@@ -132,12 +138,21 @@ export default function Service() {
       // 화면 표시용은 서버가 이미 제거한 response 사용 (추가 안전망으로 stripMeta 한 번 더)
       const visible = stripMeta(response);
 
+      // 기본 옵션: 모델 meta.options 그대로(최대 3개)
+      let opts = (metaInfo.options || []).slice(0, 3);
+
+      // 단계별 보조 옵션(모델이 options를 안줬을 때만)
+      const nextStage = metaInfo.next;
+      if ((!opts || opts.length === 0) && nextStage === "askPlan") {
+        opts = ["예", "아니오"];
+      }
+      if ((!opts || opts.length === 0) && nextStage === "save") {
+        opts = ["노션에 저장하기"];
+      }
+
       const bot: Msg = { id: crypto.randomUUID(), role: "assistant", text: visible };
       const nextMsgs = [...history, bot];
       setMessages(nextMsgs);
-
-      // 후보/선택지 세팅
-      if (metaInfo.options?.length) setOptions(metaInfo.options);
 
       // 추천 전환 가드
       const hasDates = !!profile.dates || !!profile.days;
@@ -145,9 +160,9 @@ export default function Service() {
       const requiredOk = REQUIRED.every(k => Boolean(profile[k])) && hasDates && hasBudget;
       const confOk = (metaInfo.confidence ?? 0) >= 0.7;
 
-      let nextStage = metaInfo.next;
-      if (nextStage === "recommend" && !(requiredOk || confOk)) nextStage = "ask";
-      if (nextStage) setStage(nextStage);
+      let s = nextStage;
+      if (s === "recommend" && !(requiredOk || confOk)) s = "ask";
+      if (s) setStage(s);
 
 
       // 단계 전환
@@ -193,32 +208,56 @@ export default function Service() {
 
   return (
     <div className="svc">
+      {/* 상단 타이틀 */}
       <section className="svc-hero container">
         <p className="svc-title">당신은 어떤 마음을 가지고 어디로 떠나고 싶나요?</p>
       </section>
 
-      {/* 상태/에러 표시 */}
-      <section className="container">
-        {error && <div className="alert-error">⚠️ {error}</div>}
-      </section>
 
-      {/* 채팅 영역 */}
       <section className="svc-chat container">
         <div className="chatbox" ref={listRef}>
-          {messages.map((m) => (
-            <Bubble key={m.id} role={m.role} text={m.text} />
+          {messages.map((m, idx) => (
+            <Bubble
+              key={m.id}
+              role={m.role}
+              text={m.text}
+              // 마지막 assistant 말풍선에게만 옵션을 남김
+              options={m.role === "assistant" && idx === messages.length - 1 ? (m.options || []) : []}
+              onPick={(label) => {
+                // 클릭 즉시 해당 말풍선 옵션 비우기
+                setMessages(prev => prev.map(x => (x.id === m.id ? { ...x, options: [] } : x)));
+
+                // 단계별 행동
+                if (stage === "pick") {
+                  setSelectedTrip(label);
+                  setStage("askPlan");
+                  sendUser(`선택: ${label}`);
+                  return;
+                }
+                if (stage === "askPlan") {
+                  if (label === "예") { setStage("plan"); sendUser("네, 계획도 작성할게요"); }
+                  else { setStage("recommend"); sendUser("아니오, 후보를 다시 볼게요"); }
+                  return;
+                }
+                if (stage === "save" && label === "노션에 저장하기") {
+                  onSaveNotion();
+                  return;
+                }
+
+                // 그 외에는 일반 입력처럼 모델에 전달
+                sendUser(label);
+              }}
+            />
           ))}
 
           {loading && (
             <div className="row left">
-              <div className="bubble assistant">
-                <span className="dotting">생각 중…</span>
-              </div>
+              <div className="bubble assistant"><span className="dotting">생각 중…</span></div>
             </div>
           )}
         </div>
 
-        {/* 하단 입력창 */}
+        {/* 하단 입력창은 그대로: 사용자가 치는 텍스트만 보여주는 영역 */}
         <form className="composer" onSubmit={onSubmit}>
           <input
             className="composer-input"
@@ -233,72 +272,25 @@ export default function Service() {
           </button>
         </form>
       </section>
-      {/* 선택 단계 */}
-      {stage === "pick" && (
-        <div className="choices">
-          {(options.length ? options : ["첫 후보", "두 번째 후보"]).map((label) => (
-            <button
-              key={label}
-              disabled={loading}
-              onClick={() => {
-                setSelectedTrip(label);
-                sendUser(`선택: ${label}`); // 모델에게도 명시
-                setStage("askPlan");
-              }}
-            >
-              {label} 선택
-            </button>
-          ))}
-        </div>
-      )}
 
-      {/* 계획 여부 단계 */}
-      {stage === "askPlan" && (
-        <div className="choices">
-          <button disabled={loading} onClick={() => { setStage("plan"); sendUser("네, 계획도 작성할게요"); }}>
-            예
-          </button>
-          <button disabled={loading} onClick={() => { setStage("save"); sendUser("아니오, 저장만 할게요"); }}>
-            아니오
-          </button>
-        </div>
-      )}
-
-      {stage === "save" && (
-        <div className="choices">
-          <button disabled={loading} onClick={onSaveNotion}>노션에 저장하기</button>
-        </div>
-      )}
-
-      {stage === "confirm" && (
-        <div className="choices">
-          <button
-            disabled={loading}
-            onClick={() => {
-              // "맞아" 확정 → 추천으로 진행
-              sendUser("맞아. 이대로 추천해줘");
-            }}
-          >
-            맞아
-          </button>
-          <button
-            disabled={loading}
-            onClick={() => {
-              // "수정" → 다시 캐묻기
-              sendUser("아니, 몇 가지 수정할게");
-              setStage("ask");
-            }}
-          >
-            수정할래
-          </button>
-        </div>
-      )}
+      {/* 상태/에러 표시 */}
+      <section className="container">
+        {error && <div className="alert-error">⚠️ {error}</div>}
+      </section>
+      
     </div>
   );
 }
 
 
-function Bubble({ role, text }: { role: "user" | "assistant"; text: string }) {
+function Bubble({
+  role, text, options = [], onPick,
+}: {
+  role: "user" | "assistant";
+  text: string;
+  options?: string[];
+  onPick?: (label: string) => void;
+}) {
   const isUser = role === "user";
   return (
     <div className={`row ${isUser ? "right" : "left"}`}>
@@ -306,6 +298,22 @@ function Bubble({ role, text }: { role: "user" | "assistant"; text: string }) {
         {text.split("\n").map((t, i) => (
           <p key={i} style={{ margin: 0 }}>{t}</p>
         ))}
+
+        {/* 어시스턴트 말풍선 하단 퀵 리플라이 */}
+        {!isUser && options.length > 0 && (
+          <div className="quick-replies">
+            {options.map((label) => (
+              <button
+                key={label}
+                type="button"
+                className="qr-chip"
+                onClick={() => onPick?.(label)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

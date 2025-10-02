@@ -60,6 +60,27 @@
 }
 .composer-send:hover { background: rgba(0,0,0,0.03); }
 
+
+
+.quick-replies {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-top: .5rem;
+}
+.qr-chip {
+  border: 1px solid var(--stroke-200, #e4e7ec);
+  background: var(--bg-50, #fff);
+  padding: .35rem .6rem;
+  border-radius: 999px;
+  font-size: .875rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.qr-chip:hover { background: var(--bg-100, #f5f7fa); }
+
+
+
 /* 에러 배너 */
 .alert-error {
   margin: 8px 0;

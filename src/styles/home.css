@@ -35,13 +35,16 @@
 }
 
 .moro-prompt {
+  display: flex;justify-content: center;align-items: center;
   background-color: var(--bg-pill);
   border: none;border-radius: 10px;
-  padding: 30px;gap: 10px;
+  padding: 30px 50px;
 }
 .moro-prompt span {
-  font-size: 28px;color: var(--light-grey);
+  color: var(--light-grey);text-align: center;
 }
+.send-icon-1 path {fill: var(--text-pill); }
+.send-icon-1 svg { width: 22px;height: 22px;}
 
 .scroll-indicator {margin-top: 25vh;margin-bottom: 0;}
 

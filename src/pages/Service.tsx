@@ -25,6 +25,22 @@ type Profile = Partial<{
 const REQUIRED: (keyof Profile)[] = ["style", "companions", "pace"];
 const STAGES: Stage[] = ["ask", "confirm", "recommend", "pick", "askPlan", "plan", "save", "done"];
 
+// AI가 준 Markdown / JSON / CSV 블록 파싱 로직
+
+function extractStructuredBlocks(text: string) {
+  const markdown = text.match(/```markdown([\s\S]*?)```/i)?.[1]?.trim();
+  const jsonRaw = text.match(/```json([\s\S]*?)```/i)?.[1]?.trim();
+  const csv = text.match(/```csv([\s\S]*?)```/i)?.[1]?.trim();
+  let travel_info = null;
+  try {
+    if (jsonRaw) travel_info = JSON.parse(jsonRaw);
+  } catch (e) {
+    console.warn("JSON parse failed:", e);
+  }
+  return { plan_text: markdown, travel_info, csv_text: csv };
+}
+
+// 메타 텍스트 처리 로직
 
 function parseMeta(text: string): {
   next?: Stage; options: string[]; filled: string[]; missing: string[]; confidence?: number;
@@ -106,6 +122,10 @@ export default function Service() {
   const listRef = useRef<HTMLDivElement>(null);
   // const [candidates, setCandidates] = useState<string[]>([]);
 
+  const [planText, setPlanText] = useState<string>("");
+  const [csvText, setCsvText] = useState<string>("");
+  const [travelInfo, setTravelInfo] = useState<any>(null);
+
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
@@ -138,6 +158,11 @@ export default function Service() {
       // 화면 표시용은 서버가 이미 제거한 response 사용 (추가 안전망으로 stripMeta 한 번 더)
       const visible = stripMeta(response);
 
+      const structured = extractStructuredBlocks(rawMeta ?? "");
+      if (structured.plan_text) setPlanText(structured.plan_text);
+      if (structured.csv_text) setCsvText(structured.csv_text);
+      if (structured.travel_info) setTravelInfo(structured.travel_info);
+
       // 기본 옵션: 모델 meta.options 그대로(최대 3개)
       let opts = (metaInfo.options || []).slice(0, 3);
 
@@ -150,7 +175,12 @@ export default function Service() {
         opts = ["노션에 저장하기"];
       }
 
-      const bot: Msg = { id: crypto.randomUUID(), role: "assistant", text: visible };
+      const bot: Msg = { 
+        id: crypto.randomUUID(), 
+        role: "assistant", 
+        text: visible, 
+        options: opts
+      };
       const nextMsgs = [...history, bot];
       setMessages(nextMsgs);
 
@@ -166,7 +196,7 @@ export default function Service() {
 
 
       // 단계 전환
-      if (nextStage) setStage(nextStage);
+
     } catch (err: any) {
       setError(err.message || "네트워크 오류가 발생했습니다.");
     } finally {
@@ -185,22 +215,47 @@ export default function Service() {
   async function onSaveNotion() {
     try {
       setLoading(true);
+
+      // Day별 라인 나누기 (markdown 내 "Day 1" 기준)
+      const itineraryLines = planText
+        ? planText.split("\n").filter(l => /^(Day\s*\d|\d+일차)/.test(l))
+        : [];
+  
       const payload = {
         selected_trip: selectedTrip || "여행 계획",
         style: profile.style || "",
         region: profile.region_like || "",
         companions: profile.companions || "",
-        summary: "", // 원하면 최근 assistant 요약을 messages에서 찾아 넣기
-        // itinerary: ["Day1 ...", "Day2 ..."] // plan 단계에서 추출했다면
+        summary: planText.slice(0, 200), // 첫 부분을 요약으로
+        itinerary: itineraryLines,
+        travel_info: travelInfo,
       };
+
       const { page_url, guide } = await createNotionPage(payload);
-      setMessages(prev => [...prev, {
-        id: crypto.randomUUID(), role: "assistant",
-        text: `노션 페이지가 준비됐어요!\n${page_url}\n${guide ?? ""}`
-      }]);
+
+      // 다운로드용 CSV
+      if (csvText) {
+        const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${selectedTrip || "여행일정"}.csv`;
+        link.click();
+      }
+
+      setMessages(prev => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          text: `노션 페이지가 준비됐어요!\n${page_url}\n${guide ?? ""}`,
+        },
+      ]);
       setStage("done");
-    } catch (e:any) {
-      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "assistant", text: `노션 저장 중 오류: ${e.message}` }]);
+    } catch (e: any) {
+      setMessages(prev => [
+        ...prev,
+        { id: crypto.randomUUID(), role: "assistant", text: `노션 저장 중 오류: ${e.message}` },
+      ]);
     } finally {
       setLoading(false);
     }
